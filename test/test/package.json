@@ -1,0 +1,7 @@
+{
+  "name": "tests",
+  "scripts": {
+    "test": "yarn prepare && node test.js",
+    "prepare": "../../node_modules/.bin/webpack --display=errors-only"
+  }
+}

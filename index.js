@@ -30,7 +30,8 @@ module.exports = class DefaultSideEffectsPlugin {
           resolveData.descriptionFileData &&
           resolveData.descriptionFileData.sideEffects === void 0 &&
           (this.applyOutsideRootContext ||
-            resolveData.context.issuer.startsWith(context)) &&
+            (resolveData.context.issuer &&
+              resolveData.context.issuer.startsWith(context))) &&
           !this.ignoredPackages.has(resolveData.descriptionFileData.name)
         ) {
           module.factoryMeta.sideEffectFree = true;

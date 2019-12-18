@@ -71,5 +71,20 @@ module.exports = [
     mode: "development",
     optimization: { sideEffects: true },
     plugins: [new DefaultSideEffectsPlugin()]
+  },
+  {
+    name: "node-builtin-control",
+    entry: "./node-builtin.js",
+    output: { filename: "node-builtin-control.js" },
+    mode: "development",
+    optimization: { sideEffects: true },
+  },
+  {
+    name: "node-builtin-test",
+    entry: "./node-builtin.js",
+    output: { filename: "node-builtin-test.js" },
+    mode: "development",
+    optimization: { sideEffects: true },
+    plugins: [new DefaultSideEffectsPlugin()]
   }
 ];

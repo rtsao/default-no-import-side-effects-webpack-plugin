@@ -43,5 +43,12 @@ const fs = require("fs");
   const file = fs.readFileSync("./dist/conditional-impure-test.js");
   assert.equal(file.includes("foo"), true, "test bundle includes foo");
 }
-
+{
+  const file = fs.readFileSync("./dist/node-builtin-control.js");
+  assert.equal(file.includes("querystring"), true, "control bundle includes qs");
+}
+{
+  const file = fs.readFileSync("./dist/node-builtin-test.js");
+  assert.equal(file.includes("querystring"), false, "test bundle excludes qs");
+}
 console.log("✅ Tests passed");

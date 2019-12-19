@@ -3,21 +3,25 @@
 /*::
 type Opts = {|
   ignoredPackages?: Array<string>,
-  applyOutsideRootContext?: boolean
+  includeNonRootContextIssuers?: boolean,
+  includeRootContextResources?: boolean,
 |};
 */
 
-module.exports = class DefaultSideEffectsPlugin {
+module.exports = class DefaultNoImportSideEffectsPlugin {
   /*::
   ignoredPackages: Set<string>;
-  applyOutsideRootContext: boolean;
+  includeNonRootContextIssuers: boolean;
+  includeRootContextResources: boolean;
   */
   constructor({
     ignoredPackages = [],
-    applyOutsideRootContext = false
+    includeNonRootContextIssuers = false,
+    includeRootContextResources = false
   } /*: Opts */ = {}) {
     this.ignoredPackages = new Set(ignoredPackages);
-    this.applyOutsideRootContext = applyOutsideRootContext;
+    this.includeNonRootContextIssuers = includeNonRootContextIssuers;
+    this.includeRootContextResources = includeRootContextResources;
   }
   apply(compiler /*: any */) {
     const name = this.constructor.name;
@@ -25,13 +29,22 @@ module.exports = class DefaultSideEffectsPlugin {
     compiler.hooks.normalModuleFactory.tap(name, normalModuleFactory => {
       normalModuleFactory.hooks.module.tap(name, (module, data) => {
         const resolveData = data.resourceResolveData;
+
+        // Note: depending on import order, resolveData.context.issuer is not
+        // guaranteed to be the exact file containing the import statement.
+        // Instead, it may be a prior file that imported the same resource.
+
+        // So we use data.context which seems to be reliably the parent
+        // directory of the file containing the import.
+
         if (
           resolveData &&
           resolveData.descriptionFileData &&
           resolveData.descriptionFileData.sideEffects === void 0 &&
-          (this.applyOutsideRootContext ||
-            (resolveData.context.issuer &&
-              resolveData.context.issuer.startsWith(context))) &&
+          (this.includeNonRootContextIssuers ||
+            data.context.startsWith(context)) &&
+          (this.includeRootContextResources ||
+            !data.resource.startsWith(context)) &&
           !this.ignoredPackages.has(resolveData.descriptionFileData.name)
         ) {
           module.factoryMeta.sideEffectFree = true;

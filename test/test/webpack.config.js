@@ -62,7 +62,9 @@ module.exports = [
     output: { filename: "conditional-nested-outside-test.js" },
     mode: "development",
     optimization: { sideEffects: true },
-    plugins: [new DefaultSideEffectsPlugin({ applyOutsideRootContext: true })]
+    plugins: [
+      new DefaultSideEffectsPlugin({ includeNonRootContextIssuers: true })
+    ]
   },
   {
     name: "conditional-impure-test",
@@ -77,12 +79,35 @@ module.exports = [
     entry: "./node-builtin.js",
     output: { filename: "node-builtin-control.js" },
     mode: "development",
-    optimization: { sideEffects: true },
+    optimization: { sideEffects: true }
   },
   {
     name: "node-builtin-test",
     entry: "./node-builtin.js",
     output: { filename: "node-builtin-test.js" },
+    mode: "development",
+    optimization: { sideEffects: true },
+    plugins: [new DefaultSideEffectsPlugin()]
+  },
+  {
+    name: "conditional-local-control",
+    entry: "./conditional-local.js",
+    output: { filename: "conditional-local-control.js" },
+    mode: "development",
+    optimization: { sideEffects: true }
+  },
+  {
+    name: "conditional-local-test",
+    entry: "./conditional-local.js",
+    output: { filename: "conditional-local-test.js" },
+    mode: "development",
+    optimization: { sideEffects: true },
+    plugins: [new DefaultSideEffectsPlugin()]
+  },
+  {
+    name: "deep-test",
+    entry: "./deep.js",
+    output: { filename: "deep-test.js" },
     mode: "development",
     optimization: { sideEffects: true },
     plugins: [new DefaultSideEffectsPlugin()]

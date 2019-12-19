@@ -45,10 +45,39 @@ const fs = require("fs");
 }
 {
   const file = fs.readFileSync("./dist/node-builtin-control.js");
-  assert.equal(file.includes("querystring"), true, "control bundle includes qs");
+  assert.equal(
+    file.includes("querystring"),
+    true,
+    "control bundle includes qs"
+  );
 }
 {
   const file = fs.readFileSync("./dist/node-builtin-test.js");
   assert.equal(file.includes("querystring"), false, "test bundle excludes qs");
+}
+{
+  const file = fs.readFileSync("./dist/conditional-local-control.js");
+  assert.equal(
+    file.includes("some_console_log"),
+    true,
+    "control bundle includes log"
+  );
+}
+{
+  const file = fs.readFileSync("./dist/conditional-local-test.js");
+  assert.equal(
+    file.includes("some_console_log"),
+    true,
+    "test bundle includes log"
+  );
+}
+{
+  const file = fs.readFileSync("./dist/deep-test.js");
+  assert.equal(file.includes("world"), true, "test bundle includes world");
+  // Ideally, this bundle should *include* foo, but because of how webpack
+  // handles multiple imports to the same module it does not.
+  // foo should not be pruned from "nested", but it is because foo is imported
+  // in deep.js and thus marked as side effect free.
+  assert.equal(file.includes("foo"), false, "test bundle excludes foo");
 }
 console.log("✅ Tests passed");
